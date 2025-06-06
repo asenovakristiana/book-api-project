@@ -32,3 +32,42 @@ def add_book(book: Book):
     conn.commit()
     conn.close()
     return {"message": "Book added successfully!"}
+
+@router.put("/edit/{book_id}")
+def edit_book(book_id: int, book: Book):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE books SET title=?, author=?, genre=?, rating=?, published_year=?
+        WHERE id=?
+    """, (book.title, book.author, book.genre, book.rating, book.published_year, book_id))
+    conn.commit()
+    conn.close()
+    return {"message": "Book updated successfully!"}
+
+@router.delete("/delete/{book_id}")
+def delete_book(book_id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM books WHERE id=?", (book_id,))
+    conn.commit()
+    conn.close()
+    return {"message": "Book deleted successfully!"}
+
+@router.get("/search/")
+def search_books(query: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM books WHERE title LIKE ? OR genre LIKE ?", (f"%{query}%", f"%{query}%"))
+    books = cursor.fetchall()
+    conn.close()
+    return {"books": [dict(book) for book in books]}
+
+@router.get("/sort/")
+def sort_books_by_rating():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM books ORDER BY rating DESC")
+    books = cursor.fetchall()
+    conn.close()
+    return {"books": [dict(book) for book in books]}
