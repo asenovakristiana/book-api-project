@@ -25,9 +25,10 @@ def test_add_new_book():
 def test_get_books():
     response = client.get("/books/")
     assert response.status_code == 200
-    books = response.json()
+    
+    books_data = response.json()["books"] 
+    assert any(book["title"] == "Brave new world" for book in books_data)
 
-    assert any(book["title"] == "Brave new world" for book in books)
 
 
     
