@@ -1,5 +1,4 @@
 import sqlite3
-from app.database import get_db_connection 
 
 def initialize_database():
     conn = get_db_connection()
