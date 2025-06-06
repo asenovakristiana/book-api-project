@@ -34,6 +34,16 @@ def test_get_books():
 
 # Test editing a book
 def test_edit_book():
+    # Ensure book exists before editing
+    new_book = {
+        "title": "Brave New World",
+        "author": "Aldous Huxley",
+        "genre": "Dystopian",
+        "rating": 4.8,
+        "published_year": 1932
+    }
+    client.post("/books/add", json=new_book)  
+
     updated_book = {
         "title": "Brave New World - Updated",
         "author": "Aldous Huxley",
@@ -47,6 +57,16 @@ def test_edit_book():
 
 # Test deleting a book
 def test_delete_book():
+    # Ensure book exists before deleting
+    new_book = {
+        "title": "Brave New World",
+        "author": "Aldous Huxley",
+        "genre": "Dystopian",
+        "rating": 4.8,
+        "published_year": 1932
+    }
+    client.post("/books/add", json=new_book)  
+
     response = client.delete("/books/delete/1")
     assert response.status_code == 200
     assert response.json() == {"message": "Book deleted successfully!"}
