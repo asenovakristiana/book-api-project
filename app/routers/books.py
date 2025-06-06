@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import sqlite3
 from app.database import get_db_connection
@@ -19,6 +19,10 @@ def get_books():
     cursor.execute("SELECT * FROM books")
     books = cursor.fetchall()
     conn.close()
+    
+    if not books:
+        raise HTTPException(status_code=404, detail="No books found")
+    
     return {"books": [dict(book) for book in books]}
 
 @router.post("/add")
@@ -37,6 +41,12 @@ def add_book(book: Book):
 def edit_book(book_id: int, book: Book):
     conn = get_db_connection()
     cursor = conn.cursor()
+    cursor.execute("SELECT * FROM books WHERE id=?", (book_id,))
+    existing_book = cursor.fetchone()
+
+    if not existing_book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
     cursor.execute("""
         UPDATE books SET title=?, author=?, genre=?, rating=?, published_year=?
         WHERE id=?
@@ -49,6 +59,12 @@ def edit_book(book_id: int, book: Book):
 def delete_book(book_id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
+    cursor.execute("SELECT * FROM books WHERE id=?", (book_id,))
+    existing_book = cursor.fetchone()
+
+    if not existing_book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
     cursor.execute("DELETE FROM books WHERE id=?", (book_id,))
     conn.commit()
     conn.close()
@@ -61,6 +77,10 @@ def search_books(query: str):
     cursor.execute("SELECT * FROM books WHERE title LIKE ? OR genre LIKE ?", (f"%{query}%", f"%{query}%"))
     books = cursor.fetchall()
     conn.close()
+    
+    if not books:
+        raise HTTPException(status_code=404, detail="No books found matching the query")
+    
     return {"books": [dict(book) for book in books]}
 
 @router.get("/sort/")
@@ -70,4 +90,8 @@ def sort_books_by_rating():
     cursor.execute("SELECT * FROM books ORDER BY rating DESC")
     books = cursor.fetchall()
     conn.close()
+    
+    if not books:
+        raise HTTPException(status_code=404, detail="No books found to sort")
+    
     return {"books": [dict(book) for book in books]}
