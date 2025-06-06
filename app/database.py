@@ -3,11 +3,13 @@ import sqlite3
 DATABASE_NAME = "books.db"
 
 def get_db_connection():
+    """Establishes and returns a connection to the SQLite database."""
     conn = sqlite3.connect(DATABASE_NAME)
     conn.row_factory = sqlite3.Row
     return conn
 
 def initialize_database():
+    """Creates tables if they do not exist."""
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -23,7 +25,7 @@ def initialize_database():
     """)
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS reviews(
+    CREATE TABLE IF NOT EXISTS reviews (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         book_id INTEGER,
         user_name TEXT NOT NULL,
