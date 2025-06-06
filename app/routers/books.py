@@ -71,7 +71,7 @@ def delete_book(book_id: int):
 def search_books(query: str):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM books WHERE title LIKE ? OR genre LIKE ?", (f"%{query}%", f"%{query}%"))
+    cursor.execute("SELECT id, title, author, genre, rating, published_year FROM books WHERE title LIKE ? OR genre LIKE ?", (f"%{query}%", f"%{query}%"))
     books = cursor.fetchall()
     conn.close()
 
@@ -81,7 +81,7 @@ def search_books(query: str):
 def sort_books_by_rating():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM books ORDER BY rating DESC")
+    cursor.execute("SELECT id, title, author, genre, rating, published_year FROM books ORDER BY rating DESC")
     books = cursor.fetchall()
     conn.close()
 
