@@ -1,13 +1,25 @@
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import declarative_base
+import sqlite3
+conn = sqlite3.connect("books.db")
+cursor = conn.cursor()
 
-Base = declarative_base()
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS books (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    author TEXT NOT NULL,
+    genre TEXT,
+    rating REAL,
+    published_year INTEGER
+)    
+""")
 
-class Book(Base):
-    __tablename__ = "books"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String, nullable=False)
-    author = Column(String, nullable=False)
-    genre = Column(String)
-    rating = Column(Float)
-    published_year = Column(Integer)
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS reviews(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    book_id INTEGER,
+    user_name TEXT NOT NULL,
+    rating REAL NOT NULL,
+    comment TEXT,
+    FOREIGN KEY(book_id) REFERENCES books(id) ON DELETE CASCADE
+)
+""")
