@@ -21,4 +21,5 @@ def test_get_reviews():
     assert response.status_code == 200
     reviews = response.json()
 
-    assert any(review["book_id"] == 2 and review["comment"] == "A timeless classic!" for review in reviews)
+    reviews_data = response.json()["reviews"]  
+    assert any(review["book_id"] == 2 and review["comment"] == "A timeless classic!" for review in reviews_data)
