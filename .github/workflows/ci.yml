@@ -28,3 +28,6 @@ jobs:
       - name: Run tests
         run: |
           pytest --disable-warnings
+
+      - name: Verify SQLite3 is installed
+        run: python -c "import sqlite3; print(sqlite3.version)"
