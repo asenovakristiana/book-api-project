@@ -20,10 +20,7 @@ def get_books():
     books = cursor.fetchall()
     conn.close()
     
-    if not books:
-        raise HTTPException(status_code=404, detail="No books found")
-    
-    return {"books": [dict(book) for book in books]}
+    return {"books": [dict(book) for book in books]} if books else {"books": []}
 
 @router.post("/add")
 def add_book(book: Book):
@@ -45,7 +42,7 @@ def edit_book(book_id: int, book: Book):
     existing_book = cursor.fetchone()
 
     if not existing_book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        return {"message": "Book not found"}
 
     cursor.execute("""
         UPDATE books SET title=?, author=?, genre=?, rating=?, published_year=?
@@ -63,7 +60,7 @@ def delete_book(book_id: int):
     existing_book = cursor.fetchone()
 
     if not existing_book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        return {"message": "Book not found"}
 
     cursor.execute("DELETE FROM books WHERE id=?", (book_id,))
     conn.commit()
@@ -78,10 +75,7 @@ def search_books(query: str):
     books = cursor.fetchall()
     conn.close()
     
-    if not books:
-        raise HTTPException(status_code=404, detail="No books found matching the query")
-    
-    return {"books": [dict(book) for book in books]}
+    return {"books": [dict(book) for book in books]} if books else {"books": []}
 
 @router.get("/sort/")
 def sort_books_by_rating():
@@ -91,7 +85,4 @@ def sort_books_by_rating():
     books = cursor.fetchall()
     conn.close()
     
-    if not books:
-        raise HTTPException(status_code=404, detail="No books found to sort")
-    
-    return {"books": [dict(book) for book in books]}
+    return {"books": [dict(book) for book in books]} if books else {"books": []}
