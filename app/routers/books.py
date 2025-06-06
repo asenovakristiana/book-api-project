@@ -16,7 +16,7 @@ class Book(BaseModel):
 def get_books():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM books")
+    cursor.execute("SELECT id, title, author, genre, rating, published_year FROM books")
     books = cursor.fetchall()
     conn.close()
 
@@ -42,7 +42,7 @@ def edit_book(book_id: int, book: Book):
     existing_book = cursor.fetchone()
 
     if not existing_book:
-        return {"message": "Book not found"}
+        raise HTTPException(status_code=404, detail="Book not found")
 
     cursor.execute("""
         UPDATE books SET title=?, author=?, genre=?, rating=?, published_year=?
@@ -60,7 +60,7 @@ def delete_book(book_id: int):
     existing_book = cursor.fetchone()
 
     if not existing_book:
-        return {"message": "Book not found"}
+        raise HTTPException(status_code=404, detail="Book not found")
 
     cursor.execute("DELETE FROM books WHERE id=?", (book_id,))
     conn.commit()
@@ -75,7 +75,7 @@ def search_books(query: str):
     books = cursor.fetchall()
     conn.close()
 
-    return {"books": [dict(book) for book in books]} if books else {"books": []}
+    return {"books": [dict(book) for book in books]} if books else {"books": [{"message": "No books found"}]}
 
 @router.get("/sort/")
 def sort_books_by_rating():
@@ -85,4 +85,4 @@ def sort_books_by_rating():
     books = cursor.fetchall()
     conn.close()
 
-    return {"books": [dict(book) for book in books]} if books else {"books": []}
+    return {"books": [dict(book) for book in books]} if books else {"books": [{"message": "No books found to sort"}]}
