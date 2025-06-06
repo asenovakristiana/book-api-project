@@ -1,12 +1,5 @@
 import sqlite3
-from app.database import get_db_connection
-
-DATABASE_NAME = "books.db"
-
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
-    return conn
+from app.database import get_db_connection 
 
 def initialize_database():
     conn = get_db_connection()
@@ -14,12 +7,12 @@ def initialize_database():
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS books (
-                   id INTEGER PRIMARY KEY AUTOINCREMENT,
-                   title TEXT NOT NULL,
-                   author TEXT NOT NULL,
-                   genre TEXT NOT NULL,
-                   rating REAL NOT NULL,
-                   published_year INTEGER NOT NULL
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        author TEXT NOT NULL,
+        genre TEXT NOT NULL,
+        rating REAL NOT NULL,
+        published_year INTEGER NOT NULL
     )
     """)
 
@@ -35,4 +28,5 @@ def initialize_database():
     conn.close()
     print("Database initialized with books!")
 
-initialize_database()
+if __name__ == "__main__":  # Ensures it's only executed when run directly
+    initialize_database()
