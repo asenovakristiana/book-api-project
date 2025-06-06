@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 import sqlite3
-from database import get_db_connection
+from app.database import get_db_connection
 
 router = APIRouter()
 
