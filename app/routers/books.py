@@ -19,7 +19,7 @@ def get_books():
     cursor.execute("SELECT * FROM books")
     books = cursor.fetchall()
     conn.close()
-    
+
     return {"books": [dict(book) for book in books]} if books else {"books": []}
 
 @router.post("/add")
@@ -74,7 +74,7 @@ def search_books(query: str):
     cursor.execute("SELECT * FROM books WHERE title LIKE ? OR genre LIKE ?", (f"%{query}%", f"%{query}%"))
     books = cursor.fetchall()
     conn.close()
-    
+
     return {"books": [dict(book) for book in books]} if books else {"books": []}
 
 @router.get("/sort/")
@@ -84,5 +84,5 @@ def sort_books_by_rating():
     cursor.execute("SELECT * FROM books ORDER BY rating DESC")
     books = cursor.fetchall()
     conn.close()
-    
+
     return {"books": [dict(book) for book in books]} if books else {"books": []}
